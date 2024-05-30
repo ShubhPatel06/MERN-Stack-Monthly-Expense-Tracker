@@ -2,19 +2,20 @@
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import Joi from "joi";
 
 export const signup = async (req, res) => {
-  //   const schema = Joi.object({
-  //     name: Joi.string().min(3).max(30).required(),
-  //     email: Joi.string().min(3).max(200).email().required(),
-  //     password: Joi.string().min(6).max(200).required(),
-  //   });
+  const schema = Joi.object({
+    username: Joi.string().min(3).max(30).required(),
+    email: Joi.string().min(3).max(200).email().required(),
+    password: Joi.string().min(6).max(200).required(),
+  });
 
-  //   const { error } = schema.validate(req.body);
+  const { error } = schema.validate(req.body);
 
-  //   if (error) {
-  //     return res.status(400).send(error.details[0].message);
-  //   }
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
 
   try {
     let user = await User.findOne({ email: req.body.email });
@@ -23,10 +24,10 @@ export const signup = async (req, res) => {
       return res.status(400).send("User with that email already exists!");
     }
 
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     user = new User({
-      name,
+      username,
       email,
       password,
     });
@@ -42,16 +43,16 @@ export const signup = async (req, res) => {
 };
 
 export const signin = async (req, res) => {
-  //   const schema = Joi.object({
-  //     email: Joi.string().min(3).max(200).email().required(),
-  //     password: Joi.string().min(6).max(200).required(),
-  //   });
+  const schema = Joi.object({
+    email: Joi.string().min(3).max(200).email().required(),
+    password: Joi.string().min(6).max(200).required(),
+  });
 
-  //   const { error } = schema.validate(req.body);
+  const { error } = schema.validate(req.body);
 
-  //   if (error) {
-  //     return res.status(400).send(error.details[0].message);
-  //   }
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
 
   try {
     const { email, password } = req.body;

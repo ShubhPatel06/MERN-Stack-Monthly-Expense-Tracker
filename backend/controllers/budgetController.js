@@ -29,7 +29,7 @@ export const setBudget = async (req, res) => {
     }
 
     const newBudget = new MonthlyBudget({
-      user: req.user.id,
+      userID: req.user.id,
       year,
       month,
       budget,

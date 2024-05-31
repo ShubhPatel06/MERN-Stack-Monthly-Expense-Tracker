@@ -9,7 +9,7 @@ function verifyJWT(req, res, next) {
 
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
     if (err) return res.status(403).send("Forbidden");
     req.user = decoded;
     next();

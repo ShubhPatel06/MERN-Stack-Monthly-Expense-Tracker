@@ -18,7 +18,7 @@ import { useSendLogoutMutation } from "../../redux/api/authApiSlice";
 import { toast } from "react-toastify";
 import PulseLoader from "react-spinners/PulseLoader";
 
-const pages = ["dashboard", "categories", "expenses"];
+const pages = ["dashboard", "budgets", "categories", "expenses"];
 
 const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -167,7 +167,12 @@ const NavBar = () => {
                       <PersonIcon fontSize="small" sx={{ color: "#555" }} />
                     </Avatar>
                     {username !== "" && (
-                      <Typography sx={{ fontSize: "1.1rem", color: "#fff" }}>
+                      <Typography
+                        sx={{
+                          fontSize: "1.1rem",
+                          color: "#fff",
+                        }}
+                      >
                         {username}
                       </Typography>
                     )}

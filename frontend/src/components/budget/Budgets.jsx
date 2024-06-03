@@ -7,15 +7,15 @@ import { useState } from "react";
 const Budgets = () => {
   const [budget, setBudget] = useState({
     budget: "",
-    year: new Date(),
-    month: new Date(),
+    year: "",
+    month: "",
   });
 
   return (
     <Box sx={{ flexGrow: 1, m: 6 }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         <Grid xs={12} md={8}>
-          <BudgetsList />
+          <BudgetsList setBudget={setBudget} />
         </Grid>
         <Grid xs={12} md={4}>
           <AddBudget budget={budget} setBudget={setBudget} />

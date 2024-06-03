@@ -65,7 +65,7 @@ export const budgetApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-  useGetBudgetQuery,
+  useGetBudgetsQuery,
   useAddNewBudgetMutation,
   useUpdateBudgetMutation,
   useDeleteBudgetMutation,

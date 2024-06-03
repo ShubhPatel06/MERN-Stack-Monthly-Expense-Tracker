@@ -56,7 +56,7 @@ export const deleteCategory = async (req, res) => {
       return res.status(404).send("Category not found!");
     }
 
-    if (category.userID !== req.user.id) {
+    if (category.userID.toString() !== req.user.id.toString()) {
       return res
         .status(401)
         .send("You are not authorized to delete this category!");

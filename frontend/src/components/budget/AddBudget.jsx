@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   useAddNewBudgetMutation,
   useUpdateBudgetMutation,
@@ -80,8 +80,6 @@ const AddBudget = ({ budget, setBudget }) => {
         month: month,
       };
 
-      console.log(updatedBudget);
-
       await updateBudget({ updatedBudget, id });
     } else {
       const data = {
@@ -89,8 +87,6 @@ const AddBudget = ({ budget, setBudget }) => {
         year: year,
         month: month,
       };
-
-      console.log(data);
 
       await addNewBudget(data);
     }

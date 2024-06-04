@@ -1,4 +1,5 @@
 import Category from "../models/category.js";
+import Joi from "joi";
 
 export const getCategories = async (req, res) => {
   try {
@@ -10,6 +11,16 @@ export const getCategories = async (req, res) => {
 };
 
 export const createCategory = async (req, res) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(30).required(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
   const { name } = req.body;
 
   try {
@@ -22,17 +33,27 @@ export const createCategory = async (req, res) => {
 };
 
 export const updateCategory = async (req, res) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(30).required(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
   const { id } = req.params;
   const { name } = req.body;
 
   try {
-    const category = await Todo.findById(id).exec();
+    const category = await Category.findById(id).exec();
 
     if (!category) {
       return res.status(404).send("Category not found!");
     }
 
-    if (category.userID !== req.user.id) {
+    if (category.userID.toString() !== req.user.id.toString()) {
       return res
         .status(401)
         .send("You are not authorized to update this category!");
@@ -48,7 +69,7 @@ export const updateCategory = async (req, res) => {
 };
 
 export const deleteCategory = async (req, res) => {
-  const { id } = req.params.id;
+  const { id } = req.params;
   try {
     const category = await Category.findById(id).exec();
 

@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./components/dashboard/Dashboard";
 import Budgets from "./components/budget/Budgets";
+import Categories from "./components/categories/Categories";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
               <Route element={<Layout />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="budgets" element={<Budgets />} />
+                <Route path="categories" element={<Categories />} />
               </Route>
             </Route>
           </Route>

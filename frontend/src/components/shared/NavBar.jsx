@@ -12,7 +12,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import PersonIcon from "@mui/icons-material/Person";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useSendLogoutMutation } from "../../redux/api/authApiSlice";
 import { toast } from "react-toastify";
@@ -25,6 +25,7 @@ const NavBar = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { username } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [sendLogout, { isLoading, isSuccess, isError, error }] =
     useSendLogoutMutation();
@@ -105,7 +106,16 @@ const NavBar = () => {
               >
                 {pages.map((page) => (
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Link to={`/${page}`}>{page}</Link>
+                    <Link
+                      style={{
+                        textTransform: "uppercase",
+                        color:
+                          location.pathname === `/${page}` ? "blue" : "inherit",
+                      }}
+                      to={`/${page}`}
+                    >
+                      {page}
+                    </Link>
                   </MenuItem>
                 ))}
               </Menu>
@@ -142,7 +152,12 @@ const NavBar = () => {
                 <Link
                   key={page}
                   to={`/${page}`}
-                  style={{ color: "white", display: "block" }}
+                  style={{
+                    color: "white",
+                    display: "block",
+                    textDecoration:
+                      location.pathname === `/${page}` ? "underline" : "none",
+                  }}
                 >
                   {page}
                 </Link>

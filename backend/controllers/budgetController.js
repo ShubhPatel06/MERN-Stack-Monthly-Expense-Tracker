@@ -1,4 +1,5 @@
 import MonthlyBudget from "../models/monthlyBudget.js";
+import Joi from "joi";
 
 // export const getBudget = async (req, res) => {
 //   const { year, month } = req.query;
@@ -28,6 +29,18 @@ export const getBudget = async (req, res) => {
 };
 
 export const setBudget = async (req, res) => {
+  const schema = Joi.object({
+    year: Joi.number().required(),
+    month: Joi.number().required().min(1).max(12),
+    budget: Joi.number().min(1).required(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
   const { year, month, budget } = req.body;
 
   try {
@@ -36,6 +49,7 @@ export const setBudget = async (req, res) => {
       year,
       month,
     });
+
     if (existingBudget) {
       return res.status(400).send("Budget already set for this month");
     }
@@ -55,10 +69,32 @@ export const setBudget = async (req, res) => {
 };
 
 export const updateBudget = async (req, res) => {
+  const schema = Joi.object({
+    year: Joi.number().required(),
+    month: Joi.number().required().min(1).max(12),
+    budget: Joi.number().min(1).required(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
   const { id } = req.params;
   const { budget, year, month } = req.body;
 
   try {
+    const existingBudget = await MonthlyBudget.findOne({
+      userID: req.user.id,
+      year,
+      month,
+    });
+
+    if (existingBudget) {
+      return res.status(400).send("Budget already set for this month");
+    }
+
     const foundBudget = await MonthlyBudget.findById(id).exec();
 
     if (!foundBudget) {

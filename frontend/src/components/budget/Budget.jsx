@@ -14,8 +14,8 @@ const Budget = ({ budgetId, setBudget }) => {
   const handleEdit = () => {
     setBudget({
       ...budget,
-      year: new Date(new Date().setFullYear(budget.year)),
-      month: new Date(new Date().setMonth(budget.month - 1)), // Subtract 1 to match JavaScript's month indexing
+      year: new Date(new Date().setFullYear(budget?.year)),
+      month: new Date(new Date().setMonth(budget?.month - 1)), // Subtract 1 to match JavaScript's month indexing
     });
 
     window.scrollTo({
@@ -39,7 +39,7 @@ const Budget = ({ budgetId, setBudget }) => {
     "November",
     "December",
   ];
-  const monthName = monthNames[budget.month - 1];
+  const monthName = monthNames[budget?.month - 1];
 
   if (!budget) return null;
 
@@ -49,6 +49,7 @@ const Budget = ({ budgetId, setBudget }) => {
       <TableCell align="center">{monthName}</TableCell>
       <TableCell align="center">{budget.budget}</TableCell>
       <TableCell align="center">{budget.expenses}</TableCell>
+      <TableCell align="center">{budget.budget - budget.expenses}</TableCell>
       <TableCell component="th" scope="row" align="center">
         <IconButton
           onClick={() => handleEdit()}

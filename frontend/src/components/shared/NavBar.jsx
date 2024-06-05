@@ -18,7 +18,7 @@ import { useSendLogoutMutation } from "../../redux/api/authApiSlice";
 import { toast } from "react-toastify";
 import PulseLoader from "react-spinners/PulseLoader";
 
-const pages = ["dashboard", "budgets", "categories", "expenses"];
+const pages = ["dashboard", "categories", "budgets", "expenses"];
 
 const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);

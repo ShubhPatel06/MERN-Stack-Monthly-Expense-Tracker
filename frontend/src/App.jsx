@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./components/dashboard/Dashboard";
 import Budgets from "./components/budget/Budgets";
 import Categories from "./components/categories/Categories";
+import Expenses from "./components/expenses/Expenses";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="budgets" element={<Budgets />} />
                 <Route path="categories" element={<Categories />} />
+                <Route path="expenses" element={<Expenses />} />
               </Route>
             </Route>
           </Route>

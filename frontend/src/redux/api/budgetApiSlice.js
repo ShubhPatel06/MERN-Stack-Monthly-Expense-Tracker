@@ -7,13 +7,34 @@ const initialState = budgetAdapter.getInitialState();
 
 export const budgetApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getBudgets: builder.query({
+    getBudgetYears: builder.query({
       query: () => ({
-        url: "/budget",
+        url: "/budget/years",
         validateStatus: (response, result) => {
           return response.status === 200 && !result.isError;
         },
       }),
+      transformResponse: (responseData) => {
+        return responseData; // Assuming responseData is an array of years
+      },
+      providesTags: ["BudgetYears"],
+    }),
+    getBudgets: builder.query({
+      // query: ({ year }) => ({
+      //   url: `/budget?year=${year}`,
+      //   validateStatus: (response, result) => {
+      //     return response.status === 200 && !result.isError;
+      //   },
+      // }),
+      query: ({ year }) => {
+        console.log("Year:", year); // Logging the year parameter
+        return {
+          url: `/budget?year=${year}`,
+          validateStatus: (response, result) => {
+            return response.status === 200 && !result.isError;
+          },
+        };
+      },
       transformResponse: (responseData) => {
         const loadedBudgets = responseData.map((budget) => {
           budget.id = budget._id;
@@ -38,7 +59,10 @@ export const budgetApiSlice = apiSlice.injectEndpoints({
           ...newBudget,
         },
       }),
-      invalidatesTags: [{ type: "Budget", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Budget", id: "LIST" },
+        { type: "BudgetYears" },
+      ],
     }),
     updateBudget: builder.mutation({
       query(data) {
@@ -51,24 +75,19 @@ export const budgetApiSlice = apiSlice.injectEndpoints({
           },
         };
       },
-      invalidatesTags: (result, error, arg) => [{ type: "Budget", id: arg.id }],
-    }),
-    deleteBudget: builder.mutation({
-      query: (id) => ({
-        url: `/budget/${id}`,
-        method: "DELETE",
-        body: { id },
-      }),
-      invalidatesTags: (result, error, arg) => [{ type: "Budget", id: arg.id }],
+      invalidatesTags: (result, error, arg) => [
+        { type: "Budget", id: arg.id },
+        { type: "BudgetYears" },
+      ],
     }),
   }),
 });
 
 export const {
+  useGetBudgetYearsQuery,
   useGetBudgetsQuery,
   useAddNewBudgetMutation,
   useUpdateBudgetMutation,
-  useDeleteBudgetMutation,
 } = budgetApiSlice;
 
 // returns the query result object

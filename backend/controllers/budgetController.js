@@ -1,6 +1,20 @@
 import MonthlyBudget from "../models/monthlyBudget.js";
 import Joi from "joi";
 
+export const getBudgetYears = async (req, res) => {
+  try {
+    const distinctYears = await MonthlyBudget.distinct("year", {
+      userID: req.user.id,
+    });
+    if (!distinctYears || distinctYears.length === 0)
+      return res.status(404).send("No budgets found");
+
+    res.send(distinctYears);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
 // export const getBudget = async (req, res) => {
 //   const { year, month } = req.query;
 //   try {
@@ -15,11 +29,28 @@ import Joi from "joi";
 //     res.status(500).send(error.message);
 //   }
 // };
+
+// export const getBudget = async (req, res) => {
+//   try {
+//     const budgets = await MonthlyBudget.find({
+//       userID: req.user.id,
+//     });
+//     if (!budgets || budgets.length === 0)
+//       return res.status(404).send("No budgets found");
+//     res.send(budgets);
+//   } catch (error) {
+//     res.status(500).send(error.message);
+//   }
+// };
+
 export const getBudget = async (req, res) => {
   try {
-    const budgets = await MonthlyBudget.find({
+    const { year } = req.query;
+    const query = {
       userID: req.user.id,
-    });
+      ...(year && { year: Number(year) }),
+    };
+    const budgets = await MonthlyBudget.find(query);
     if (!budgets || budgets.length === 0)
       return res.status(404).send("No budgets found");
     res.send(budgets);

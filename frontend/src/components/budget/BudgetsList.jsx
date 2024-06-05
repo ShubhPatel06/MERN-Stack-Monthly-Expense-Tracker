@@ -1,5 +1,8 @@
 import PulseLoader from "react-spinners/PulseLoader";
-import { useGetBudgetsQuery } from "../../redux/api/budgetApiSlice";
+import {
+  useGetBudgetYearsQuery,
+  useGetBudgetsQuery,
+} from "../../redux/api/budgetApiSlice";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,62 +10,114 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Typography } from "@mui/material";
+import { Box, MenuItem, Select, Typography } from "@mui/material";
 import Budget from "./Budget";
+import { useEffect, useState } from "react";
 
 const BudgetsList = ({ setBudget }) => {
+  const [selectedYear, setSelectedYear] = useState("");
+
+  const {
+    data: years,
+    isLoading: yearsLoading,
+    isSuccess: yearsSuccess,
+    isError: yearsError,
+    error: yearsErrorMsg,
+  } = useGetBudgetYearsQuery();
+
+  useEffect(() => {
+    if (yearsSuccess && years && years?.length > 0) {
+      setSelectedYear(years[years?.length - 1]);
+    }
+  }, [years, yearsSuccess]);
+
   const {
     data: budgets,
     isLoading,
     isSuccess,
     isError,
     error,
-  } = useGetBudgetsQuery("budgetsList");
+  } = useGetBudgetsQuery(
+    {
+      budgetsList: "budgetsList",
+      year: selectedYear || new Date().getFullYear(),
+    },
+    {
+      skip: !selectedYear,
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
-  if (isLoading) return <PulseLoader />;
-
-  if (isError) return <p>{error?.data}</p>;
+  if (isError || yearsError) return <p>{error?.data || yearsErrorMsg}</p>;
 
   if (isSuccess) {
     const { ids } = budgets;
 
     return (
       <>
-        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          {ids.length > 0 ? "Monthly Budgets" : "No budget added yet"}
-        </Typography>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Year
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Month
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Budget
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Expenses
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {ids.map((budgetId) => (
-                <Budget
-                  key={budgetId}
-                  budgetId={budgetId}
-                  setBudget={setBudget}
-                />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 2,
+          }}
+        >
+          <Typography component="h1" variant="h5">
+            {ids.length > 0 ? "Monthly Budgets" : "No budget added yet"}
+          </Typography>
+          {years && (
+            <Select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+            >
+              {years.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </Select>
+          )}
+        </Box>
+        {isLoading ? (
+          <PulseLoader />
+        ) : (
+          <TableContainer component={Paper}>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Year
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Month
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Budget
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Expenses
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Balance
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Action
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {ids.map((budgetId) => (
+                  <Budget
+                    key={budgetId}
+                    budgetId={budgetId}
+                    setBudget={setBudget}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </>
     );
   }

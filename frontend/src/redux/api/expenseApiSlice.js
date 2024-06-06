@@ -7,6 +7,30 @@ const initialState = expenseAdapter.getInitialState();
 
 export const expenseApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getExpenseYears: builder.query({
+      query: () => ({
+        url: "/expense/years",
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
+      transformResponse: (responseData) => {
+        return responseData; // Assuming responseData is an array of years
+      },
+      providesTags: ["ExpenseYears"],
+    }),
+    getExpenseMonths: builder.query({
+      query: ({ year }) => ({
+        url: `/expense/months?year=${year}`,
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
+      transformResponse: (responseData) => {
+        return responseData; // Assuming responseData is an array of months
+      },
+      providesTags: ["ExpenseMonths"],
+    }),
     getExpenses: builder.query({
       query: () => ({
         url: "/expense",
@@ -40,6 +64,8 @@ export const expenseApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [
         { type: "Expense", id: "LIST" },
+        { type: "ExpenseYears" },
+        { type: "ExpenseMonths" },
         { type: "Budget", id: "LIST" },
       ],
     }),
@@ -56,6 +82,8 @@ export const expenseApiSlice = apiSlice.injectEndpoints({
       },
       invalidatesTags: (result, error, arg) => [
         { type: "Expense", id: arg.id },
+        { type: "ExpenseYears" },
+        { type: "ExpenseMonths" },
         { type: "Budget", id: "LIST" },
       ],
     }),
@@ -67,6 +95,8 @@ export const expenseApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Expense", id: arg.id },
+        { type: "ExpenseYears" },
+        { type: "ExpenseMonths" },
         { type: "Budget", id: "LIST" },
       ],
     }),
@@ -74,6 +104,8 @@ export const expenseApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
+  useGetExpenseYearsQuery,
+  useGetExpenseMonthsQuery,
   useGetExpensesQuery,
   useAddNewExpenseMutation,
   useUpdateExpenseMutation,

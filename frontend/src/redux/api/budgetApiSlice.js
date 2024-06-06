@@ -20,14 +20,7 @@ export const budgetApiSlice = apiSlice.injectEndpoints({
       providesTags: ["BudgetYears"],
     }),
     getBudgets: builder.query({
-      // query: ({ year }) => ({
-      //   url: `/budget?year=${year}`,
-      //   validateStatus: (response, result) => {
-      //     return response.status === 200 && !result.isError;
-      //   },
-      // }),
       query: ({ year }) => {
-        console.log("Year:", year); // Logging the year parameter
         return {
           url: `/budget?year=${year}`,
           validateStatus: (response, result) => {

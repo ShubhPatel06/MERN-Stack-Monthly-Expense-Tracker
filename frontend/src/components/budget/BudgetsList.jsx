@@ -25,12 +25,6 @@ const BudgetsList = ({ setBudget }) => {
     error: yearsErrorMsg,
   } = useGetBudgetYearsQuery();
 
-  useEffect(() => {
-    if (yearsSuccess && years && years?.length > 0) {
-      setSelectedYear(years[years?.length - 1]);
-    }
-  }, [years, yearsSuccess]);
-
   const {
     data: budgets,
     isLoading,
@@ -38,17 +32,21 @@ const BudgetsList = ({ setBudget }) => {
     isError,
     error,
   } = useGetBudgetsQuery(
+    { budgetsList: "budgetsList", year: selectedYear },
     {
-      budgetsList: "budgetsList",
-      year: selectedYear || new Date().getFullYear(),
-    },
-    {
-      skip: !selectedYear,
       refetchOnMountOrArgChange: true,
     }
   );
 
-  if (isError || yearsError) return <p>{error?.data || yearsErrorMsg}</p>;
+  useEffect(() => {
+    if (yearsSuccess && years) {
+      const latestYearIndex = years.length - 1;
+      const latestYear = years[latestYearIndex];
+      setSelectedYear(latestYear);
+    }
+  }, [yearsSuccess, years]);
+
+  if (isError || yearsError) return <p>{error?.data || yearsErrorMsg?.data}</p>;
 
   if (isSuccess) {
     const { ids } = budgets;
@@ -69,7 +67,9 @@ const BudgetsList = ({ setBudget }) => {
           {years && (
             <Select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
+              onChange={(e) => {
+                setSelectedYear(e.target.value);
+              }}
             >
               {years.map((year) => (
                 <MenuItem key={year} value={year}>
@@ -79,7 +79,7 @@ const BudgetsList = ({ setBudget }) => {
             </Select>
           )}
         </Box>
-        {isLoading ? (
+        {isLoading || yearsLoading ? (
           <PulseLoader />
         ) : (
           <TableContainer component={Paper}>
@@ -112,6 +112,7 @@ const BudgetsList = ({ setBudget }) => {
                     key={budgetId}
                     budgetId={budgetId}
                     setBudget={setBudget}
+                    year={selectedYear}
                   />
                 ))}
               </TableBody>

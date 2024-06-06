@@ -3,6 +3,40 @@ import MonthlyBudget from "../models/monthlyBudget.js";
 import Category from "../models/category.js";
 import Joi from "joi";
 
+export const getExpenseYears = async (req, res) => {
+  try {
+    const expenseYears = await Expense.distinct("date", {
+      userID: req.user.id,
+    }).then((dates) => {
+      return dates.map((date) => new Date(date).getFullYear());
+    });
+
+    res.send(expenseYears);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+};
+
+export const getUniqueMonths = async (req, res) => {
+  const { year } = req.query;
+
+  try {
+    const startDate = new Date(year, 0, 1); // Start of the year
+    const endDate = new Date(year, 11, 31); // End of the year
+
+    const uniqueMonths = await Expense.distinct("date", {
+      userID: req.user.id,
+      date: { $gte: startDate, $lte: endDate },
+    }).then((dates) => {
+      return dates.map((date) => new Date(date).getMonth() + 1); // Adding 1 because getMonth() returns zero-based months
+    });
+
+    res.send(uniqueMonths);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+};
+
 export const getExpenses = async (req, res) => {
   try {
     const expenses = await Expense.find({ userID: req.user.id })

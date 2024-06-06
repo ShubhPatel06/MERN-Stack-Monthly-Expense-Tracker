@@ -6,6 +6,7 @@ export const getBudgetYears = async (req, res) => {
     const distinctYears = await MonthlyBudget.distinct("year", {
       userID: req.user.id,
     });
+
     if (!distinctYears || distinctYears.length === 0)
       return res.status(404).send("No budgets found");
 
@@ -15,44 +16,20 @@ export const getBudgetYears = async (req, res) => {
   }
 };
 
-// export const getBudget = async (req, res) => {
-//   const { year, month } = req.query;
-//   try {
-//     const budget = await MonthlyBudget.findOne({
-//       userID: req.user.id,
-//       year,
-//       month,
-//     });
-//     if (!budget) return res.status(404).send("Budget not found");
-//     res.send(budget);
-//   } catch (error) {
-//     res.status(500).send(error.message);
-//   }
-// };
-
-// export const getBudget = async (req, res) => {
-//   try {
-//     const budgets = await MonthlyBudget.find({
-//       userID: req.user.id,
-//     });
-//     if (!budgets || budgets.length === 0)
-//       return res.status(404).send("No budgets found");
-//     res.send(budgets);
-//   } catch (error) {
-//     res.status(500).send(error.message);
-//   }
-// };
-
 export const getBudget = async (req, res) => {
   try {
     const { year } = req.query;
+
     const query = {
       userID: req.user.id,
       ...(year && { year: Number(year) }),
     };
+
     const budgets = await MonthlyBudget.find(query);
+
     if (!budgets || budgets.length === 0)
       return res.status(404).send("No budgets found");
+
     res.send(budgets);
   } catch (error) {
     res.status(500).send(error.message);

@@ -4,12 +4,15 @@ import { useGetBudgetsQuery } from "../../redux/api/budgetApiSlice";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
-const Budget = ({ budgetId, setBudget }) => {
-  const { budget } = useGetBudgetsQuery("budgetsList", {
-    selectFromResult: ({ data }) => ({
-      budget: data?.entities[budgetId],
-    }),
-  });
+const Budget = ({ budgetId, setBudget, year }) => {
+  const { budget } = useGetBudgetsQuery(
+    { budgetsList: "budgetsList", year: year },
+    {
+      selectFromResult: ({ data }) => ({
+        budget: data?.entities[budgetId],
+      }),
+    }
+  );
 
   const handleEdit = () => {
     setBudget({

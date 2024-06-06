@@ -2,6 +2,7 @@ import express from "express";
 import {
   addExpense,
   deleteExpense,
+  getExpenseYears,
   getExpenses,
   updateExpense,
 } from "../controllers/expenseController.js";
@@ -16,5 +17,9 @@ router.get("/", verifyJWT, getExpenses);
 router.put("/:id", verifyJWT, updateExpense);
 
 router.delete("/:id", verifyJWT, deleteExpense);
+
+router.get("/years", verifyJWT, getExpenseYears);
+
+router.get("/months", verifyJWT, getExpenseYears);
 
 export default router;

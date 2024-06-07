@@ -7,9 +7,6 @@ export const getBudgetYears = async (req, res) => {
       userID: req.user.id,
     });
 
-    if (!distinctYears || distinctYears.length === 0)
-      return res.status(404).send("No budgets found");
-
     res.send(distinctYears);
   } catch (error) {
     res.status(500).send(error.message);

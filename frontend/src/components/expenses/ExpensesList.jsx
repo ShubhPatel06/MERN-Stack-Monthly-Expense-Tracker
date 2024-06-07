@@ -1,4 +1,3 @@
-import PulseLoader from "react-spinners/PulseLoader";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,7 +5,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Box,
+  MenuItem,
+  Select,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import {
   useGetExpenseMonthsQuery,
   useGetExpenseYearsQuery,
@@ -33,9 +38,7 @@ const ExpensesList = ({ setExpense }) => {
     isSuccess: monthsSuccess,
     isError: monthsError,
     error: monthsErrorMsg,
-  } = useGetExpenseMonthsQuery({ year: selectedYear });
-
-  console.log(months);
+  } = useGetExpenseMonthsQuery({ year: selectedYear }, { skip: !selectedYear });
 
   const {
     data: expenses,
@@ -43,9 +46,13 @@ const ExpensesList = ({ setExpense }) => {
     isSuccess,
     isError,
     error,
-  } = useGetExpensesQuery("expensesList", {
-    refetchOnMountOrArgChange: true,
-  });
+  } = useGetExpensesQuery(
+    { expensesList: "expensesList", year: selectedYear, month: selectedMonth },
+    {
+      skip: !selectedMonth,
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   useEffect(() => {
     if (yearsSuccess && years) {
@@ -63,11 +70,41 @@ const ExpensesList = ({ setExpense }) => {
     }
   }, [monthsSuccess, months]);
 
+  if (isLoading || yearsLoading || monthsLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   if (isError || yearsError || monthsError)
     return <p>{error?.data || yearsErrorMsg?.data || monthsErrorMsg?.data}</p>;
 
   if (isSuccess) {
     const { ids } = expenses;
+
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
 
     return (
       <>
@@ -82,10 +119,11 @@ const ExpensesList = ({ setExpense }) => {
           <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
             {ids.length > 0 ? "Monthly Expenses" : "No expenses added yet"}
           </Typography>
-          {years && (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
             <Select
               value={selectedYear}
               onChange={(e) => {
+                setSelectedMonth("");
                 setSelectedYear(e.target.value);
               }}
             >
@@ -95,58 +133,54 @@ const ExpensesList = ({ setExpense }) => {
                 </MenuItem>
               ))}
             </Select>
-          )}
-          {months && (
             <Select
-              value={selectedYear}
+              value={selectedMonth}
               onChange={(e) => {
                 setSelectedMonth(e.target.value);
               }}
             >
               {months.map((month) => (
                 <MenuItem key={month} value={month}>
-                  {month}
+                  {monthNames[month - 1]}
                 </MenuItem>
               ))}
             </Select>
-          )}
+          </Box>
         </Box>
-        {isLoading || yearsLoading || monthsLoading ? (
-          <PulseLoader />
-        ) : (
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Expense Amount
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Description
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Category
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Date Added
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {ids.map((expenseId) => (
-                  <Expense
-                    key={expenseId}
-                    expenseId={expenseId}
-                    setExpense={setExpense}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+        <TableContainer component={Paper}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Expense Amount
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Description
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Category
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Date Added
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {ids.map((expenseId) => (
+                <Expense
+                  key={expenseId}
+                  expenseId={expenseId}
+                  setExpense={setExpense}
+                  year={selectedYear}
+                  month={selectedMonth}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </>
     );
   }

@@ -1,4 +1,3 @@
-import PulseLoader from "react-spinners/PulseLoader";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,7 +5,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { useGetCategoriesQuery } from "../../redux/api/categoryApiSlice";
 import Category from "./Category";
 
@@ -19,7 +18,20 @@ const CategoriesList = ({ setCategory }) => {
     error,
   } = useGetCategoriesQuery("categoriesList");
 
-  if (isLoading) return <PulseLoader />;
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (isError) return <p>{error?.data}</p>;
 

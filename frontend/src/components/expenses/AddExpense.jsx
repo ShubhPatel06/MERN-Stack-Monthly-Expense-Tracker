@@ -91,11 +91,9 @@ const AddExpense = ({ expense, setExpense }) => {
         category: expense.category,
         date: expense.date,
       };
-      console.log(updatedExpense);
 
       await updateExpense({ updatedExpense, id });
     } else {
-      console.log(expense);
       await addNewExpense(expense);
     }
   };

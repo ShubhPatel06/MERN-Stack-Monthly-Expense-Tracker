@@ -4,6 +4,7 @@ import Joi from "joi";
 export const getCategories = async (req, res) => {
   try {
     const categories = await Category.find({ userID: req.user.id }).lean();
+
     res.send(categories);
   } catch (error) {
     res.status(500).send(error.message);

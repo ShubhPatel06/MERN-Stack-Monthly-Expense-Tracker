@@ -1,4 +1,3 @@
-import PulseLoader from "react-spinners/PulseLoader";
 import {
   useGetBudgetYearsQuery,
   useGetBudgetsQuery,
@@ -10,7 +9,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import Budget from "./Budget";
 import { useEffect, useState } from "react";
 
@@ -34,6 +39,7 @@ const BudgetsList = ({ setBudget }) => {
   } = useGetBudgetsQuery(
     { budgetsList: "budgetsList", year: selectedYear },
     {
+      skip: !selectedYear,
       refetchOnMountOrArgChange: true,
     }
   );
@@ -45,6 +51,21 @@ const BudgetsList = ({ setBudget }) => {
       setSelectedYear(latestYear);
     }
   }, [yearsSuccess, years]);
+
+  if (isLoading || yearsLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (isError || yearsError) return <p>{error?.data || yearsErrorMsg?.data}</p>;
 
@@ -79,46 +100,43 @@ const BudgetsList = ({ setBudget }) => {
             </Select>
           )}
         </Box>
-        {isLoading || yearsLoading ? (
-          <PulseLoader />
-        ) : (
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Year
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Month
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Budget
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Expenses
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Balance
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {ids.map((budgetId) => (
-                  <Budget
-                    key={budgetId}
-                    budgetId={budgetId}
-                    setBudget={setBudget}
-                    year={selectedYear}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+
+        <TableContainer component={Paper}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Year
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Month
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Budget
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Expenses
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Balance
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {ids.map((budgetId) => (
+                <Budget
+                  key={budgetId}
+                  budgetId={budgetId}
+                  setBudget={setBudget}
+                  year={selectedYear}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </>
     );
   }

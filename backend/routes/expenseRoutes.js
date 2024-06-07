@@ -4,6 +4,7 @@ import {
   deleteExpense,
   getExpenseYears,
   getExpenses,
+  getUniqueMonths,
   updateExpense,
 } from "../controllers/expenseController.js";
 import verifyJWT from "../middleware/verifyJWT.js";
@@ -20,6 +21,6 @@ router.delete("/:id", verifyJWT, deleteExpense);
 
 router.get("/years", verifyJWT, getExpenseYears);
 
-router.get("/months", verifyJWT, getExpenseYears);
+router.get("/months", verifyJWT, getUniqueMonths);
 
 export default router;

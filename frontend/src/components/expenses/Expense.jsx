@@ -10,12 +10,15 @@ import {
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
-const Expense = ({ expenseId, setExpense }) => {
-  const { expense } = useGetExpensesQuery("expensesList", {
-    selectFromResult: ({ data }) => ({
-      expense: data?.entities[expenseId],
-    }),
-  });
+const Expense = ({ expenseId, setExpense, year, month }) => {
+  const { expense } = useGetExpensesQuery(
+    { expensesList: "expensesList", year: year, month: month },
+    {
+      selectFromResult: ({ data }) => ({
+        expense: data?.entities[expenseId],
+      }),
+    }
+  );
 
   const [deleteExpense, { isSuccess, isError, error }] =
     useDeleteExpenseMutation();

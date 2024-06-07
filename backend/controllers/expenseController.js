@@ -8,7 +8,8 @@ export const getExpenseYears = async (req, res) => {
     const expenseYears = await Expense.distinct("date", {
       userID: req.user.id,
     }).then((dates) => {
-      return dates.map((date) => new Date(date).getFullYear());
+      const years = dates.map((date) => new Date(date).getFullYear());
+      return Array.from(new Set(years)); // Remove duplicate years
     });
 
     res.send(expenseYears);
@@ -38,14 +39,24 @@ export const getUniqueMonths = async (req, res) => {
 };
 
 export const getExpenses = async (req, res) => {
+  const { year, month } = req.query;
+
   try {
-    const expenses = await Expense.find({ userID: req.user.id })
-      .sort({
-        date: -1,
-      })
+    let startDate, endDate;
+    if (year && month) {
+      // Subtract 1 from month because JS dates are zero-indexed (0 = January, 11 = December)
+      startDate = new Date(year, month - 1, 1); // First day of the month at 00:00:00.000
+      endDate = new Date(year, month - 1 + 1, 0, 23, 59, 59, 999); // Last moment of the month
+    }
+
+    const expenses = await Expense.find({
+      userID: req.user.id,
+      date: { $gte: startDate, $lte: endDate },
+    })
+      .sort({ date: -1 })
       .populate("category", "name");
 
-    if (!expenses?.length) {
+    if (!expenses.length) {
       return res.status(400).send("No expenses found");
     }
 

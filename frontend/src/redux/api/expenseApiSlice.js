@@ -32,8 +32,8 @@ export const expenseApiSlice = apiSlice.injectEndpoints({
       providesTags: ["ExpenseMonths"],
     }),
     getExpenses: builder.query({
-      query: () => ({
-        url: "/expense",
+      query: ({ year, month }) => ({
+        url: `/expense?year=${year}&month=${month}`,
         validateStatus: (response, result) => {
           return response.status === 200 && !result.isError;
         },

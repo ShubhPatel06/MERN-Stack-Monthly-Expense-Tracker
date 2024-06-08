@@ -1,5 +1,11 @@
+import MonthlyOverview from "./MonthlyOverview";
+
 const Dashboard = () => {
-  return <div>Dashboard</div>;
+  return (
+    <>
+      <MonthlyOverview />
+    </>
+  );
 };
 
 export default Dashboard;

@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { connectDB } from "./config/dbConnection.js";
 import mongoose from "mongoose";
 import { corsOptions } from "./config/corsOption.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import budgetRoutes from "./routes/budgetRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
@@ -32,6 +33,7 @@ const __dirname = path.dirname(__filename);
 app.use("/", express.static(path.join(__dirname, "public")));
 
 app.use("/", rootRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/budget", budgetRoutes);

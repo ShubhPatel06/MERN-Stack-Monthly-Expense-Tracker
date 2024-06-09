@@ -120,31 +120,44 @@ const ExpensesList = ({ setExpense }) => {
             {ids.length > 0 ? "Monthly Expenses" : "No expenses added yet"}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-            <Select
-              value={selectedYear}
-              onChange={(e) => {
-                setSelectedMonth("");
-                setSelectedYear(e.target.value);
-              }}
-            >
-              {years.map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
-            </Select>
-            <Select
-              value={selectedMonth}
-              onChange={(e) => {
-                setSelectedMonth(e.target.value);
-              }}
-            >
-              {months.map((month) => (
-                <MenuItem key={month} value={month}>
-                  {monthNames[month - 1]}
-                </MenuItem>
-              ))}
-            </Select>
+            {years && years.length > 0 ? (
+              <Select
+                value={selectedYear}
+                onChange={(e) => {
+                  setSelectedMonth("");
+                  setSelectedYear(e.target.value);
+                }}
+              >
+                {years.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </Select>
+            ) : (
+              <Typography variant="body1" color="textSecondary">
+                No years available.
+              </Typography>
+            )}
+
+            {years.length > 0 && months && months.length > 0 ? (
+              <Select
+                value={selectedMonth}
+                onChange={(e) => {
+                  setSelectedMonth(e.target.value);
+                }}
+              >
+                {months.map((month) => (
+                  <MenuItem key={month} value={month}>
+                    {monthNames[month - 1]}
+                  </MenuItem>
+                ))}
+              </Select>
+            ) : (
+              <Typography variant="body1" color="textSecondary">
+                No months available.
+              </Typography>
+            )}
           </Box>
         </Box>
         <TableContainer component={Paper}>
@@ -169,15 +182,23 @@ const ExpensesList = ({ setExpense }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {ids.map((expenseId) => (
-                <Expense
-                  key={expenseId}
-                  expenseId={expenseId}
-                  setExpense={setExpense}
-                  year={selectedYear}
-                  month={selectedMonth}
-                />
-              ))}
+              {ids.length > 0 ? (
+                ids.map((expenseId) => (
+                  <Expense
+                    key={expenseId}
+                    expenseId={expenseId}
+                    setExpense={setExpense}
+                    year={selectedYear}
+                    month={selectedMonth}
+                  />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell align="center" colSpan={5}>
+                    No expenses available
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

@@ -25,12 +25,18 @@ export const getUniqueMonths = async (req, res) => {
     const startDate = new Date(year, 0, 1); // Start of the year
     const endDate = new Date(year, 11, 31); // End of the year
 
-    const uniqueMonths = await Expense.distinct("date", {
+    const dates = await Expense.distinct("date", {
       userID: req.user.id,
       date: { $gte: startDate, $lte: endDate },
-    }).then((dates) => {
-      return dates.map((date) => new Date(date).getMonth() + 1); // Adding 1 because getMonth() returns zero-based months
     });
+
+    // Extract months and ensure uniqueness using a Set
+    const uniqueMonthsSet = new Set(
+      dates.map((date) => new Date(date).getMonth() + 1)
+    );
+
+    // Convert the Set back to an array
+    const uniqueMonths = Array.from(uniqueMonthsSet);
 
     res.send(uniqueMonths);
   } catch (error) {

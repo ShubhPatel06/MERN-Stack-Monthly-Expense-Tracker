@@ -85,12 +85,10 @@ const BudgetsList = ({ setBudget }) => {
           <Typography component="h1" variant="h5">
             {ids.length > 0 ? "Monthly Budgets" : "No budget added yet"}
           </Typography>
-          {years && (
+          {years && years.length > 0 ? (
             <Select
               value={selectedYear}
-              onChange={(e) => {
-                setSelectedYear(e.target.value);
-              }}
+              onChange={(e) => setSelectedYear(e.target.value)}
             >
               {years.map((year) => (
                 <MenuItem key={year} value={year}>
@@ -98,6 +96,10 @@ const BudgetsList = ({ setBudget }) => {
                 </MenuItem>
               ))}
             </Select>
+          ) : (
+            <Typography variant="body1" color="textSecondary">
+              No years available.
+            </Typography>
           )}
         </Box>
 
@@ -126,14 +128,22 @@ const BudgetsList = ({ setBudget }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {ids.map((budgetId) => (
-                <Budget
-                  key={budgetId}
-                  budgetId={budgetId}
-                  setBudget={setBudget}
-                  year={selectedYear}
-                />
-              ))}
+              {ids.length > 0 ? (
+                ids.map((budgetId) => (
+                  <Budget
+                    key={budgetId}
+                    budgetId={budgetId}
+                    setBudget={setBudget}
+                    year={selectedYear}
+                  />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell align="center" colSpan={6}>
+                    {`No budgets available for ${selectedYear}`}
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

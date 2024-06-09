@@ -25,3 +25,14 @@ export const getMonthlyOverview = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+export const yearlyExpenseTrends = async (req, res) => {
+  const { year } = req.query;
+
+  try {
+    const budgets = await MonthlyBudget.find({ year });
+    res.status(200).json(budgets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

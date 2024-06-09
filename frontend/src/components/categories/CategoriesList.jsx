@@ -56,13 +56,21 @@ const CategoriesList = ({ setCategory }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {ids.map((categoryId) => (
-                <Category
-                  key={categoryId}
-                  categoryId={categoryId}
-                  setCategory={setCategory}
-                />
-              ))}
+              {ids.length > 0 ? (
+                ids.map((categoryId) => (
+                  <Category
+                    key={categoryId}
+                    categoryId={categoryId}
+                    setCategory={setCategory}
+                  />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell align="center" colSpan={2}>
+                    No categories available for
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

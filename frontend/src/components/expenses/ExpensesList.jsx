@@ -19,6 +19,7 @@ import {
 } from "../../redux/api/expenseApiSlice";
 import Expense from "./Expense";
 import { useEffect, useState } from "react";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const ExpensesList = ({ setExpense }) => {
   const [selectedYear, setSelectedYear] = useState("");
@@ -43,7 +44,6 @@ const ExpensesList = ({ setExpense }) => {
   const {
     data: expenses,
     isLoading,
-    isSuccess,
     isError,
     error,
   } = useGetExpensesQuery(
@@ -70,7 +70,11 @@ const ExpensesList = ({ setExpense }) => {
     }
   }, [monthsSuccess, months]);
 
-  if (isLoading || yearsLoading || monthsLoading) {
+  if (yearsLoading || monthsLoading) {
+    return <PulseLoader />;
+  }
+
+  if (isLoading) {
     return (
       <Box
         sx={{
@@ -85,128 +89,131 @@ const ExpensesList = ({ setExpense }) => {
     );
   }
 
-  if (isError || yearsError || monthsError)
-    return <p>{error?.data || yearsErrorMsg?.data || monthsErrorMsg?.data}</p>;
-
-  if (isSuccess) {
-    const { ids } = expenses;
-
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
+  if (isError || yearsError || monthsError) {
     return (
-      <>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            mb: 2,
-          }}
-        >
-          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-            {ids.length > 0 ? "Monthly Expenses" : "No expenses added yet"}
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-            {years && years.length > 0 ? (
-              <Select
-                value={selectedYear}
-                onChange={(e) => {
-                  setSelectedMonth("");
-                  setSelectedYear(e.target.value);
-                }}
-              >
-                {years.map((year) => (
-                  <MenuItem key={year} value={year}>
-                    {year}
-                  </MenuItem>
-                ))}
-              </Select>
-            ) : (
-              <Typography variant="body1" color="textSecondary">
-                No years available.
-              </Typography>
-            )}
-
-            {years.length > 0 && months && months.length > 0 ? (
-              <Select
-                value={selectedMonth}
-                onChange={(e) => {
-                  setSelectedMonth(e.target.value);
-                }}
-              >
-                {months.map((month) => (
-                  <MenuItem key={month} value={month}>
-                    {monthNames[month - 1]}
-                  </MenuItem>
-                ))}
-              </Select>
-            ) : (
-              <Typography variant="body1" color="textSecondary">
-                No months available.
-              </Typography>
-            )}
-          </Box>
-        </Box>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Expense Amount
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Description
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Category
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Date Added
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {ids.length > 0 ? (
-                ids.map((expenseId) => (
-                  <Expense
-                    key={expenseId}
-                    expenseId={expenseId}
-                    setExpense={setExpense}
-                    year={selectedYear}
-                    month={selectedMonth}
-                  />
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell align="center" colSpan={5}>
-                    No expenses available
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </>
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", mt: 3 }}
+      >
+        {error?.data || yearsErrorMsg?.data || monthsErrorMsg?.data}
+      </Typography>
     );
   }
 
-  return null;
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  return (
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <Typography component="h1" variant="h5" sx={{ mb: 1 }}>
+          Monthly Expenses
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+          {years && years.length > 0 ? (
+            <Select
+              value={selectedYear}
+              onChange={(e) => {
+                setSelectedMonth("");
+                setSelectedYear(e.target.value);
+              }}
+            >
+              {years.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Typography variant="body1" color="textSecondary">
+              No years available.
+            </Typography>
+          )}
+
+          {years.length > 0 && months && months.length > 0 ? (
+            <Select
+              value={selectedMonth}
+              onChange={(e) => {
+                setSelectedMonth(e.target.value);
+              }}
+            >
+              {months.map((month) => (
+                <MenuItem key={month} value={month}>
+                  {monthNames[month - 1]}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Typography variant="body1" color="textSecondary">
+              No months available.
+            </Typography>
+          )}
+        </Box>
+      </Box>
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Expense Amount
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Description
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Category
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Date Added
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {expenses?.ids?.length > 0 ? (
+              expenses?.ids?.map((expenseId) => (
+                <Expense
+                  key={expenseId}
+                  expenseId={expenseId}
+                  setExpense={setExpense}
+                  year={selectedYear}
+                  month={selectedMonth}
+                />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell align="center" colSpan={5}>
+                  No expenses available. Please add an expense.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
 };
 
 export default ExpensesList;

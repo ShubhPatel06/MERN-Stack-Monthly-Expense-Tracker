@@ -7,13 +7,21 @@ export const dashboardApiSlice = apiSlice.injectEndpoints({
         url: "/dashboard/monthlyOverview",
       }),
     }),
-    getYearlyExpenseTrends: builder.query({
+    getYearlyBudget: builder.query({
       query: ({ year }) => ({
         url: `/dashboard/expenseTrends?year=${year}`,
+      }),
+    }),
+    getExpensesByCategory: builder.query({
+      query: () => ({
+        url: `/dashboard/expensesByCategory`,
       }),
     }),
   }),
 });
 
-export const { useGetMonthlyOverviewQuery, useGetYearlyExpenseTrendsQuery } =
-  dashboardApiSlice;
+export const {
+  useGetMonthlyOverviewQuery,
+  useGetYearlyBudgetQuery,
+  useGetExpensesByCategoryQuery,
+} = dashboardApiSlice;

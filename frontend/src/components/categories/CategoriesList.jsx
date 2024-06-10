@@ -13,10 +13,11 @@ const CategoriesList = ({ setCategory }) => {
   const {
     data: categories,
     isLoading,
-    isSuccess,
     isError,
     error,
-  } = useGetCategoriesQuery("categoriesList");
+  } = useGetCategoriesQuery("categoriesList", {
+    refetchOnMountOrArgChange: true,
+  });
 
   if (isLoading) {
     return (
@@ -33,52 +34,56 @@ const CategoriesList = ({ setCategory }) => {
     );
   }
 
-  if (isError) return <p>{error?.data}</p>;
-
-  if (isSuccess) {
-    const { ids } = categories;
-
+  if (isError) {
     return (
-      <>
-        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          {ids.length > 0 ? "Categories" : "No categories added yet"}
-        </Typography>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Category
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {ids.length > 0 ? (
-                ids.map((categoryId) => (
-                  <Category
-                    key={categoryId}
-                    categoryId={categoryId}
-                    setCategory={setCategory}
-                  />
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell align="center" colSpan={2}>
-                    No categories available for
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </>
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", mt: 3 }}
+      >
+        {error?.data}
+      </Typography>
     );
   }
 
-  return null;
+  return (
+    <>
+      <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+        Categories
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Category
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {categories?.ids?.length > 0 ? (
+              categories?.ids?.map((categoryId) => (
+                <Category
+                  key={categoryId}
+                  categoryId={categoryId}
+                  setCategory={setCategory}
+                />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell align="center" colSpan={2}>
+                  No categories available. Please add a category.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
 };
 
 export default CategoriesList;

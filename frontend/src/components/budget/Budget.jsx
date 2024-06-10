@@ -3,6 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import { useGetBudgetsQuery } from "../../redux/api/budgetApiSlice";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import { monthNames } from "../shared/months";
 
 const Budget = ({ budgetId, setBudget, year }) => {
   const { budget } = useGetBudgetsQuery(
@@ -28,20 +29,6 @@ const Budget = ({ budgetId, setBudget, year }) => {
     });
   };
 
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
   const monthName = monthNames[budget?.month - 1];
 
   if (!budget) return null;

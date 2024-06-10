@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { useGetBudgetYearsQuery } from "../../redux/api/budgetApiSlice";
+import { useGetYearlyBudgetQuery } from "../../redux/api/dashboardApiSlice";
 import {
   Box,
   CircularProgress,
@@ -5,22 +8,19 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useGetBudgetYearsQuery } from "../../redux/api/budgetApiSlice";
-import { useGetYearlyBudgetQuery } from "../../redux/api/dashboardApiSlice";
+import { monthNames } from "../shared/months";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
+  CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { monthNames } from "../shared/months";
 
-const ExpenseTrends = () => {
+const BudgetExpenseTrends = () => {
   const [selectedYear, setSelectedYear] = useState("");
 
   const {
@@ -69,9 +69,10 @@ const ExpenseTrends = () => {
   }
 
   const chartData =
-    trends?.map((item) => ({
-      month: monthNames[item?.month - 1],
-      expenses: item?.expenses,
+    trends?.map((budget) => ({
+      month: monthNames[budget?.month - 1],
+      amount: budget.budget,
+      expense: budget.expenses,
     })) || [];
 
   return (
@@ -82,10 +83,9 @@ const ExpenseTrends = () => {
           alignItems: "center",
           justifyContent: "space-between",
           mb: 2,
-          overflowX: "hidden",
         }}
       >
-        <Typography variant="h6">Yearly Expense Trends</Typography>
+        <Typography variant="h6">Budget and Expense Trends</Typography>
         {years && years.length > 0 ? (
           <Select
             value={selectedYear}
@@ -109,36 +109,19 @@ const ExpenseTrends = () => {
         </Typography>
       ) : (
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={chartData}>
+          <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="month"
-              label={{
-                value: "Month",
-                position: "insideBottom",
-                offset: -5,
-              }}
-            />
-            <YAxis
-              label={{
-                value: "Expenses",
-                angle: -90,
-                position: "insideLeft",
-              }}
-            />
+            <XAxis dataKey="month" />
+            <YAxis />
             <Tooltip />
             <Legend />
-            <Line
-              type="monotone"
-              dataKey="expenses"
-              stroke="#8884d8"
-              activeDot={{ r: 8 }}
-            />
-          </LineChart>
+            <Bar dataKey="amount" fill="#8884d8" name="Budget" />
+            <Bar dataKey="expense" fill="#82ca9d" name="Expense" />
+          </BarChart>
         </ResponsiveContainer>
       )}
     </Box>
   );
 };
 
-export default ExpenseTrends;
+export default BudgetExpenseTrends;

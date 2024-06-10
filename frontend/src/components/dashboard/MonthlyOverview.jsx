@@ -9,6 +9,7 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
+import { monthNames } from "../shared/months";
 
 const MonthlyOverview = () => {
   const {
@@ -36,8 +37,8 @@ const MonthlyOverview = () => {
 
   if (isError) {
     return (
-      <Container>
-        <Typography variant="h6" color="error">
+      <Container sx={{ mt: 3 }}>
+        <Typography variant="h6" color="error" sx={{ textAlign: "center" }}>
           {error?.data}
         </Typography>
       </Container>
@@ -47,16 +48,20 @@ const MonthlyOverview = () => {
   if (!overview) {
     return (
       <Container>
-        <Typography variant="h6">No data available</Typography>
+        <Typography variant="h6" sx={{ textAlign: "center" }}>
+          No data available
+        </Typography>
       </Container>
     );
   }
+
+  const monthName = monthNames[overview?.budgetDetails?.month - 1];
 
   return (
     isSuccess && (
       <Container>
         <Typography variant="h5" sx={{ my: 3 }}>
-          Latest Budget Overview
+          {`Budget Overview for ${monthName} ${overview?.budgetDetails.year}`}
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>

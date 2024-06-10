@@ -149,7 +149,15 @@ const AddExpense = ({ expense, setExpense }) => {
           />
         </Box>
         {categoriesLoading ? (
-          <PulseLoader />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <PulseLoader />
+          </Box>
         ) : (
           <FormControl fullWidth margin="normal" required>
             <InputLabel id="category-label">Category</InputLabel>
@@ -162,11 +170,17 @@ const AddExpense = ({ expense, setExpense }) => {
                 setExpense({ ...expense, category: e.target.value })
               }
             >
-              {categories.ids.map((id) => (
-                <MenuItem key={id} value={id}>
-                  {categories.entities[id].name}
-                </MenuItem>
-              ))}
+              {categories?.ids?.length > 0 ? (
+                categories?.ids?.map((id) => (
+                  <MenuItem key={id} value={id}>
+                    {categories.entities[id].name}
+                  </MenuItem>
+                ))
+              ) : (
+                <Typography variant="body1" color="textSecondary">
+                  No categories available. Please add a category
+                </Typography>
+              )}
             </Select>
           </FormControl>
         )}

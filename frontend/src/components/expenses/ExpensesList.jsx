@@ -20,10 +20,12 @@ import {
 import Expense from "./Expense";
 import { useEffect, useState } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
+import { monthNames } from "../shared/months";
 
 const ExpensesList = ({ setExpense }) => {
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [monthsLoaded, setMonthsLoaded] = useState(false);
 
   const {
     data: years,
@@ -49,7 +51,7 @@ const ExpensesList = ({ setExpense }) => {
   } = useGetExpensesQuery(
     { expensesList: "expensesList", year: selectedYear, month: selectedMonth },
     {
-      skip: !selectedMonth,
+      skip: !monthsLoaded,
       refetchOnMountOrArgChange: true,
     }
   );
@@ -59,6 +61,7 @@ const ExpensesList = ({ setExpense }) => {
       const latestYearIndex = years.length - 1;
       const latestYear = years[latestYearIndex];
       setSelectedYear(latestYear);
+      setSelectedMonth("");
     }
   }, [yearsSuccess, years]);
 
@@ -67,6 +70,10 @@ const ExpensesList = ({ setExpense }) => {
       const latestMonthIndex = months.length - 1;
       const latestMonth = months[latestMonthIndex];
       setSelectedMonth(latestMonth);
+
+      setTimeout(() => {
+        setMonthsLoaded(true);
+      }, 500);
     }
   }, [monthsSuccess, months]);
 
@@ -101,21 +108,6 @@ const ExpensesList = ({ setExpense }) => {
     );
   }
 
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
   return (
     <>
       <Box
@@ -134,7 +126,7 @@ const ExpensesList = ({ setExpense }) => {
             <Select
               value={selectedYear}
               onChange={(e) => {
-                setSelectedMonth("");
+                setMonthsLoaded(false);
                 setSelectedYear(e.target.value);
               }}
             >

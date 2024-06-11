@@ -9,7 +9,7 @@ const Dashboard = () => {
     <>
       <MonthlyOverview />
 
-      <Grid container spacing={3} sx={{ mt: 3 }}>
+      <Grid container spacing={2} sx={{ mt: 3 }}>
         <Grid xs={12} md={4}>
           <ExpensesByCategory />
         </Grid>

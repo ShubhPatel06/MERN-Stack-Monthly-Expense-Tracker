@@ -1,5 +1,6 @@
 import MonthlyBudget from "../models/monthlyBudget.js";
 import Expense from "../models/expense.js";
+import mongoose from "mongoose";
 
 export const getMonthlyOverview = async (req, res) => {
   try {
@@ -31,7 +32,10 @@ export const yearlyBudgets = async (req, res) => {
   const { year } = req.query;
 
   try {
-    const budgets = await MonthlyBudget.find({ year });
+    const budgets = await MonthlyBudget.find({
+      userID: req.user.id,
+      year: year,
+    });
     res.status(200).send(budgets);
   } catch (error) {
     res.status(500).send(error.message);
@@ -40,7 +44,14 @@ export const yearlyBudgets = async (req, res) => {
 
 export const expensesByCategory = async (req, res) => {
   try {
+    const userID = req.user.id;
+
     const expenses = await Expense.aggregate([
+      {
+        $match: {
+          userID: mongoose.Types.ObjectId.createFromHexString(userID),
+        },
+      },
       {
         $group: {
           _id: "$category",

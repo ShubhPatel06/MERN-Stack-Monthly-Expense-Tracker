@@ -51,41 +51,54 @@ const ExpensesByCategory = () => {
     );
   }
 
-  return data && data.length > 0 ? (
-    <Box sx={{ padding: 3 }}>
+  return (
+    <Box
+      sx={{
+        padding: 3,
+        mx: 1,
+        border: "1px solid #e0e0e0",
+        borderRadius: "0.2rem",
+      }}
+    >
       <Typography variant="h6" sx={{ mb: 3 }}>
         Expenses By Category
       </Typography>
-      <PieChart width={400} height={400}>
-        <Pie
-          dataKey="totalAmount"
-          isAnimationActive={false}
-          data={data}
-          cx={200}
-          cy={200}
-          outerRadius={80}
-          fill="#8884d8"
-          label={({ category }) => category}
+      {data && data.length > 0 ? (
+        <PieChart width={400} height={400}>
+          <Pie
+            dataKey="totalAmount"
+            isAnimationActive={false}
+            data={data}
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            fill="#8884d8"
+            label={({ category }) => category}
+          >
+            {data?.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={generateColors(data.length)[index]}
+              />
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value, name, props) => {
+              const category = props.payload.category;
+              return [`${value}`, `${category}`];
+            }}
+          />
+        </PieChart>
+      ) : (
+        <Typography
+          variant="h6"
+          color="error"
+          sx={{ textAlign: "center", mt: 3 }}
         >
-          {data?.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={generateColors(data.length)[index]}
-            />
-          ))}
-        </Pie>
-        <Tooltip
-          formatter={(value, name, props) => {
-            const category = props.payload.category;
-            return [`${value}`, `${category}`];
-          }}
-        />
-      </PieChart>
+          No data available
+        </Typography>
+      )}
     </Box>
-  ) : (
-    <Typography variant="h6" color="error" sx={{ textAlign: "center", mt: 3 }}>
-      No data available
-    </Typography>
   );
 };
 

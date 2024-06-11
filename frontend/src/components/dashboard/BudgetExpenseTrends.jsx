@@ -53,6 +53,7 @@ const BudgetExpenseTrends = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
+          border: "1px solid #e0e0e0",
         }}
       >
         <CircularProgress />
@@ -76,7 +77,9 @@ const BudgetExpenseTrends = () => {
     })) || [];
 
   return (
-    <Box sx={{ px: 4 }}>
+    <Box
+      sx={{ p: 3, mx: 1, border: "1px solid #e0e0e0", borderRadius: "0.2rem" }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -104,8 +107,12 @@ const BudgetExpenseTrends = () => {
         )}
       </Box>
       {chartData.length === 0 ? (
-        <Typography variant="h6" color="textSecondary">
-          No data available.
+        <Typography
+          variant="h6"
+          color="error"
+          sx={{ textAlign: "center", mt: 3 }}
+        >
+          No data available
         </Typography>
       ) : (
         <ResponsiveContainer width="100%" height={400}>

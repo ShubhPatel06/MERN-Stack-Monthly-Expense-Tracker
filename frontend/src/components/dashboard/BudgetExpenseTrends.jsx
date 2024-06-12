@@ -112,7 +112,7 @@ const BudgetExpenseTrends = () => {
           color="error"
           sx={{ textAlign: "center", mt: 3 }}
         >
-          No data available
+          No data available. Please add some expenses.
         </Typography>
       ) : (
         <ResponsiveContainer width="100%" height={400}>

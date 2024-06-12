@@ -11,18 +11,20 @@ export const getMonthlyOverview = async (req, res) => {
       month: -1,
     });
 
-    if (!latestBudget) {
-      return res.status(404).send("No budget found. Please add a budget.");
-    }
+    // if (!latestBudget) {
+    //   return res.status(404).send("No budget found. Please add a budget.");
+    // }
 
-    const remainingBudget = latestBudget.budget - latestBudget.expenses;
+    // const remainingBudget = latestBudget.budget - latestBudget.expenses;
 
-    res.json({
-      totalBudget: latestBudget.budget,
-      totalExpenses: latestBudget.expenses,
-      remainingBudget,
-      budgetDetails: latestBudget,
-    });
+    // res.json({
+    //   totalBudget: latestBudget.budget,
+    //   totalExpenses: latestBudget.expenses,
+    //   remainingBudget,
+    //   budgetDetails: latestBudget,
+    // });
+
+    res.send(latestBudget);
   } catch (error) {
     res.status(500).send(error.message);
   }

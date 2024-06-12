@@ -62,10 +62,9 @@ export const getExpenses = async (req, res) => {
       .sort({ date: -1 })
       .populate("category", "name");
 
-    if (!expenses.length) {
-      return res.status(400).send("No expenses found");
-    }
-
+    // if (!expenses.length) {
+    //   return res.status(400).send("No expenses found");
+    // }
     res.send(expenses);
   } catch (error) {
     res.status(500).json(error.message);

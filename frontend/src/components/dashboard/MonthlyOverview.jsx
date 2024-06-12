@@ -45,24 +45,16 @@ const MonthlyOverview = () => {
     );
   }
 
-  if (!overview) {
-    return (
-      <Container>
-        <Typography variant="h6" sx={{ textAlign: "center" }}>
-          No data available
-        </Typography>
-      </Container>
-    );
-  }
-
-  const monthName = monthNames[overview?.budgetDetails?.month - 1];
+  const monthName = monthNames[overview?.month - 1];
 
   return (
-    isSuccess && (
-      <Container>
-        <Typography variant="h5" sx={{ my: 3 }}>
-          {`Budget Overview for ${monthName} ${overview?.budgetDetails.year}`}
-        </Typography>
+    <Container>
+      <Typography variant="h5" sx={{ my: 3 }}>
+        {overview
+          ? `Budget Overview for ${monthName} ${overview?.year} `
+          : `Latest Budget Overview`}
+      </Typography>
+      {isSuccess && overview ? (
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
             <Paper elevation={3} sx={{ p: "16px" }}>
@@ -70,7 +62,7 @@ const MonthlyOverview = () => {
                 variant="h5"
                 sx={{ textAlign: "center", mb: 1, color: blue[500] }}
               >
-                {overview.totalBudget}
+                {overview?.budget}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: "center" }}>
                 Total Budget
@@ -83,7 +75,7 @@ const MonthlyOverview = () => {
                 variant="h5"
                 sx={{ textAlign: "center", mb: 1, color: red[500] }}
               >
-                {overview.totalExpenses}
+                {overview?.expenses}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: "center" }}>
                 Total Expenses
@@ -96,7 +88,7 @@ const MonthlyOverview = () => {
                 variant="h5"
                 sx={{ textAlign: "center", mb: 1, color: green[500] }}
               >
-                {overview.remainingBudget}
+                {overview?.budget - overview?.expenses}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: "center" }}>
                 Remaining Budget
@@ -104,8 +96,16 @@ const MonthlyOverview = () => {
             </Paper>
           </Grid>
         </Grid>
-      </Container>
-    )
+      ) : (
+        <Typography
+          variant="h6"
+          color="error"
+          sx={{ textAlign: "center", mt: 3 }}
+        >
+          No data available. Please add a budget.
+        </Typography>
+      )}
+    </Container>
   );
 };
 

@@ -95,7 +95,7 @@ const ExpensesByCategory = () => {
           color="error"
           sx={{ textAlign: "center", mt: 3 }}
         >
-          No data available
+          No data available.Please add some expenses.
         </Typography>
       )}
     </Box>

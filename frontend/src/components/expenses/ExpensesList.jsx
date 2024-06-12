@@ -51,22 +51,21 @@ const ExpensesList = ({ setExpense }) => {
   } = useGetExpensesQuery(
     { expensesList: "expensesList", year: selectedYear, month: selectedMonth },
     {
-      skip: !monthsLoaded,
+      skip: !monthsLoaded && !selectedMonth,
       refetchOnMountOrArgChange: true,
     }
   );
 
   useEffect(() => {
-    if (yearsSuccess && years) {
+    if (yearsSuccess && years.length > 0) {
       const latestYearIndex = years.length - 1;
       const latestYear = years[latestYearIndex];
       setSelectedYear(latestYear);
-      setSelectedMonth("");
     }
   }, [yearsSuccess, years]);
 
   useEffect(() => {
-    if (monthsSuccess && months) {
+    if (monthsSuccess && months.length > 0) {
       const latestMonthIndex = months.length - 1;
       const latestMonth = months[latestMonthIndex];
       setSelectedMonth(latestMonth);
@@ -74,10 +73,14 @@ const ExpensesList = ({ setExpense }) => {
       setTimeout(() => {
         setMonthsLoaded(true);
       }, 500);
+    } else {
+      setTimeout(() => {
+        setMonthsLoaded(true);
+      }, 500);
     }
   }, [monthsSuccess, months]);
 
-  if (yearsLoading || monthsLoading) {
+  if (yearsLoading || monthsLoading || !monthsLoaded) {
     return <PulseLoader />;
   }
 
@@ -126,6 +129,7 @@ const ExpensesList = ({ setExpense }) => {
             <Select
               value={selectedYear}
               onChange={(e) => {
+                setSelectedMonth("");
                 setMonthsLoaded(false);
                 setSelectedYear(e.target.value);
               }}

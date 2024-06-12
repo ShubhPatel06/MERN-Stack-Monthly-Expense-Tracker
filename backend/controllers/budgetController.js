@@ -90,16 +90,6 @@ export const updateBudget = async (req, res) => {
   const { budget, year, month } = req.body;
 
   try {
-    const existingBudget = await MonthlyBudget.findOne({
-      userID: req.user.id,
-      year,
-      month,
-    });
-
-    if (existingBudget) {
-      return res.status(400).send("Budget already set for this month");
-    }
-
     const foundBudget = await MonthlyBudget.findById(id).exec();
 
     if (!foundBudget) {
